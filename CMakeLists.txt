@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 project(PlatformerSFML)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 
 #---- Fetch SFML, only works if you have git installed on your machine ----#
@@ -23,7 +23,7 @@ add_executable(PlatformerSFML ${SOURCE_FILES})  # Names the application and tell
 target_link_libraries(PlatformerSFML PRIVATE sfml-graphics sfml-window sfml-system sfml-network sfml-audio) # Links the SFML libraries we need to our application
 target_compile_features(PlatformerSFML PRIVATE cxx_std_20)  # Defines which standard of C++ the compiler should use
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Data/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/bin/Data/)  # Copies data from source directory to build directory (so the executable can access it)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Data/ DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Data/)
 
 if(WIN32)
     add_custom_command(

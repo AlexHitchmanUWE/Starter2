@@ -14,6 +14,7 @@ public:
 	void render();
 	void mouseClicked(sf::Event event);
 	void keyPressed(sf::Event event);
+	void newAnimal();
 
 
 private:
@@ -21,13 +22,20 @@ private:
 	void spawn();
 
 	sf::RenderWindow& window;
+
 	sf::Sprite background;
 	sf::Texture background_texture;
 	sf::Sprite bird;
 	sf::Texture bird_texture;
+	sf::Sprite* character = new sf::Sprite;
+	sf::Sprite* passport = new sf::Sprite;
+	sf::Texture* animals = new sf::Texture[3];
+	sf::Texture* passports = new sf::Texture[3];
+
 	sf::Font font;
 	sf::Text title_text;
 	sf::Clock clocku;
+
 
 
 	bool in_menu;
@@ -39,6 +47,9 @@ private:
 
 
 	bool reverse = false;
+	bool passport_accepted = false;
+	bool passport_rejected = false;
+	bool should_accept = false;
 	float speed = 200;
 	sf::Vector2u windowSize = window.getSize();
 

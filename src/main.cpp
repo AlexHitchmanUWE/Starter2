@@ -10,7 +10,7 @@ int main()
         << std::endl;
 
     // create window and set up
-    sf::RenderWindow window(sf::VideoMode(1080, 720), "Whack a mole!!");
+    sf::RenderWindow window(sf::VideoMode(1080, 720), "Animal Control");
     window.setFramerateLimit(60);
 
     //initialise an instance of the game class
@@ -46,6 +46,11 @@ int main()
             {
                 game.keyPressed(event);
             }
+            // 'mouse' click event
+            if (event.type == sf::Event::MouseButtonPressed)
+            {
+                game.mouseClicked(event);
+            }
         }
         //'update' element of the game loop
         game.update(dt);
@@ -56,11 +61,7 @@ int main()
         game.render();
         window.display();
 
-        // 'mouse' click event
-        if (event.type == sf::Event::MouseButtonPressed)
-        {
-            game.mouseClicked(event);
-        }
+       
     }
 
     return 0;

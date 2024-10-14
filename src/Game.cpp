@@ -11,9 +11,12 @@ Game::Game(sf::RenderWindow& game_window)
 {
     srand(time(NULL));
 }
-
 Game::~Game()
 {
+    delete[] animals;
+    delete[] passports;
+    delete character;
+    delete passport;
 
 }
 
@@ -26,7 +29,7 @@ bool Game::init()
     menu_text.setFont(font);
     menu_text.setCharacterSize(40); // Set your desired font size
     menu_text.setFillColor(sf::Color::Red); // Set text color
-    menu_text.setString("Whack a Mole! :"); // Text for the menu title
+    menu_text.setString("Animal Control :"); // Text for the menu title
     menu_text.setPosition(window.getSize().x / 2.7 - menu_text.getGlobalBounds().width / 2.7, 100);
 
     // Initialize Play option text
@@ -43,12 +46,12 @@ bool Game::init()
     quit_option.setString("Quit"); // Text for the Quit option
     quit_option.setPosition(window.getSize().x / 2.2 - quit_option.getGlobalBounds().width / 2.2, 250);
     // init sprite
-    if (!background_texture.loadFromFile("../Data/WhackaMole Worksheet/background.png"))
+    if (!background_texture.loadFromFile("Data/WhackaMole Worksheet/background.png"))
     {
         std::cout << "background texture did not load \n";
     }
     background.setTexture(background_texture);
-    if (!bird_texture.loadFromFile("../Data/WhackaMole Worksheet/bird.png"))
+    if (!bird_texture.loadFromFile("Data/WhackaMole Worksheet/bird.png"))
     {
         std::cout << "bird texture did not load \n";
     }
@@ -58,11 +61,11 @@ bool Game::init()
     bird.setScale(0.5, 0.5);
 
     // init text
-    if (!font.loadFromFile("../Data/Fonts/OpenSans-Bold.ttf"))
+    if (!font.loadFromFile("Data/Fonts/OpenSans-Bold.ttf"))
     {
         std::cout << "font did not load \n";
     }
-    title_text.setString("Whack-a-mole");
+    title_text.setString("Animal Control");
     title_text.setFont(font);
     title_text.setCharacterSize(100);
     title_text.setFillColor(sf::Color(216, 0, 38, 80));
@@ -77,6 +80,34 @@ bool Game::init()
     score_text.setPosition(
         window.getSize().x / 8 - score_text.getGlobalBounds().width / 2,
         window.getSize().y / 16 - score_text.getGlobalBounds().height / 2);
+
+
+    if (!animals[0].loadFromFile("Data/Critter Crossing Customs/elephant.png"))
+    {
+        std::cout << "elephant no load :'(";
+    }
+    if (!animals[1].loadFromFile("Data/Critter Crossing Customs/moose.png"))
+    {
+        std::cout << "moose gone ;(";
+    }
+    if (!animals[2].loadFromFile("Data/Critter Crossing Customs/penguin.png"))
+    {
+        std::cout << "pingu dead ;V";
+    }
+
+    if (!passports[0].loadFromFile("Data/Critter Crossing Customs/elephant passport.png"))
+    {
+        std::cout << "elephant illegal";
+    }
+    if (!passports[1].loadFromFile("Data/Critter Crossing Customs/moose passport.png"))
+    {
+        std::cout << "moose is definitely illegal";
+    }
+    if (!passports[2].loadFromFile("Data/Critter Crossing Customs/penguin passport.png"))
+    {
+        std::cout << "penguin might be illegal";
+    }
+    
 
     return true;
 
@@ -105,7 +136,7 @@ void Game::update(float dt)
         bird.setTextureRect(sf::IntRect(
             0, 0, bird.getLocalBounds().width, bird.getLocalBounds().height));
     }
-    score_text.setString("score: " + std::to_string(score));
+    //score_text.setString("score: " + std::to_string(score));
 }
 
 void Game::render()
@@ -119,9 +150,11 @@ void Game::render()
     else
     {
         window.draw(background);
-        window.draw(bird);
-        window.draw(title_text);
+        //window.draw(bird);
+        //window.draw(title_text);
         window.draw(score_text);
+        window.draw(*character);
+        window.draw(*passport);
     }
 
 }
@@ -132,11 +165,12 @@ void Game::mouseClicked(sf::Event event)
     //get the click position
     sf::Vector2i click = sf::Mouse::getPosition(window);
     // check if in bounds of bird Sprite
-    if (collisionCheck(click, bird))
+    if (collisionCheck(click, *passport))
     {
         if (true)
         {
-            spawn();
+            newAnimal();
+            
 
         }
 
@@ -166,6 +200,7 @@ void Game::keyPressed(sf::Event event)
         {
             // Perform the action for Play
             in_menu = false;
+            newAnimal();
         }
         else
         {
@@ -205,4 +240,29 @@ void Game::spawn()
     int yPos = rand() % (windowSize.y - static_cast<int>(bird.getLocalBounds().height));
 
     bird.setPosition(static_cast<float>(xPos), static_cast<float>(yPos));
+}
+void Game::newAnimal()
+{
+    int animal_index = rand() % 3;
+    int passport_index = rand() % 3;
+
+    if (animal_index == passport_index)
+    {
+        should_accept = true;
+        std::cout << "Passed.\n";
+    }
+    else
+    {
+        should_accept = false;
+        std::cout << "Illegal!!\n";
+
+    }
+
+    character->setTexture(animals[animal_index], true);
+    character->setScale(1.8, 1.8);
+    character->setPosition(window.getSize().x / 20, window.getSize().y / 4);
+
+    passport->setTexture(passports[passport_index]);
+    passport->setScale(0.6, 0.6);
+    passport->setPosition(window.getSize().x / 2, window.getSize().y / 3);
 }
