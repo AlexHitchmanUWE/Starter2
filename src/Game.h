@@ -15,6 +15,7 @@ public:
 	void mouseClicked(sf::Event event);
 	void keyPressed(sf::Event event);
 	void newAnimal();
+	void dragSprite(sf::Sprite* sprite);
 
 
 private:
@@ -31,6 +32,7 @@ private:
 	sf::Sprite* passport = new sf::Sprite;
 	sf::Texture* animals = new sf::Texture[3];
 	sf::Texture* passports = new sf::Texture[3];
+	sf::Sprite* dragged = nullptr;
 
 	sf::Font font;
 	sf::Text title_text;
@@ -38,19 +40,21 @@ private:
 
 
 
-	bool in_menu;
 	sf::Text menu_text;
 	sf::Text play_option;
 	sf::Text quit_option;
 	sf::Text score_text;
+
+	bool in_menu;
 	bool play_selected = true;
-
-
 	bool reverse = false;
 	bool passport_accepted = false;
 	bool passport_rejected = false;
 	bool should_accept = false;
+
 	float speed = 200;
+	float drag_offset = (dragged*.getPosition.x, dragged->getPosition.y);
+
 	sf::Vector2u windowSize = window.getSize();
 
 	int score = 0;

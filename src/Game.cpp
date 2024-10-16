@@ -136,7 +136,7 @@ void Game::update(float dt)
         bird.setTextureRect(sf::IntRect(
             0, 0, bird.getLocalBounds().width, bird.getLocalBounds().height));
     }
-    //score_text.setString("score: " + std::to_string(score));
+    score_text.setString("score: " + std::to_string(score));
 }
 
 void Game::render()
@@ -250,6 +250,7 @@ void Game::newAnimal()
     {
         should_accept = true;
         std::cout << "Passed.\n";
+        score++;
     }
     else
     {
