@@ -115,6 +115,8 @@ bool Game::init()
 
 void Game::update(float dt)
 {
+
+    dragSprite(dragged);
     bird.move(1.0f * speed * dt, 0);
 
     if ((bird.getPosition().x > (window.getSize().x - bird.getGlobalBounds().width)) ||
@@ -161,19 +163,29 @@ void Game::render()
 
 void Game::mouseClicked(sf::Event event)
 {
-
-    //get the click position
-    sf::Vector2i click = sf::Mouse::getPosition(window);
-    // check if in bounds of bird Sprite
-    if (collisionCheck(click, *passport))
+    if (event.mouseButton.button == sf::Mouse::Left) 
     {
-        if (true)
+
+        //get the click position
+        sf::Vector2i click = sf::Mouse::getPosition(window);
+        sf::Vector2f clickf = static_cast<sf::Vector2f>(click);
+
+        
+        //// check if in bounds of bird Sprite
+        //if (collisionCheck(click, *passport))
+        //{
+        //    if (true)
+        //    {
+        //        newAnimal();
+
+
+        //    }
+
+        //}
+        if (passport->getGlobalBounds().contains(clickf))
         {
-            newAnimal();
-            
-
+            dragged = passport;
         }
-
     }
 }
 
@@ -273,6 +285,11 @@ void Game::dragSprite(sf::Sprite* sprite)
         sf::Vector2i mouse_position = sf::Mouse::getPosition(window);
         sf::Vector2f mouse_positionf = static_cast<sf::Vector2f>(mouse_position);
 
-        sf::Vector2f drag_position = mouse_positionf - drag_offset; 
+       sf::Vector2f drag_position = mouse_positionf;
+       sprite->setPosition(drag_position.x, drag_position.y);
     }
+}
+void Game::mouseButtonReleased(sf::Event event)
+{
+    dragged = nullptr;
 }

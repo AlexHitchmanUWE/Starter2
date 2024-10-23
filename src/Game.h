@@ -13,6 +13,7 @@ public:
 	void update(float dt);
 	void render();
 	void mouseClicked(sf::Event event);
+	void mouseButtonReleased(sf::Event event);
 	void keyPressed(sf::Event event);
 	void newAnimal();
 	void dragSprite(sf::Sprite* sprite);
@@ -53,7 +54,7 @@ private:
 	bool should_accept = false;
 
 	float speed = 200;
-	float* drag_offset = (*dragged->getPosition().x, dragged->getPosition.y);
+	//float* drag_offset = (dragged->getPosition().x, dragged->getPosition().y);
 
 	sf::Vector2u windowSize = window.getSize();
 
