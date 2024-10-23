@@ -152,7 +152,7 @@ void Game::render()
         window.draw(background);
         //window.draw(bird);
         //window.draw(title_text);
-        window.draw(score_text);
+        //window.draw(score_text);
         window.draw(*character);
         window.draw(*passport);
     }
@@ -250,7 +250,6 @@ void Game::newAnimal()
     {
         should_accept = true;
         std::cout << "Passed.\n";
-        score++;
     }
     else
     {
@@ -266,4 +265,14 @@ void Game::newAnimal()
     passport->setTexture(passports[passport_index]);
     passport->setScale(0.6, 0.6);
     passport->setPosition(window.getSize().x / 2, window.getSize().y / 3);
+}
+void Game::dragSprite(sf::Sprite* sprite)
+{
+    if (sprite != nullptr)
+    {
+        sf::Vector2i mouse_position = sf::Mouse::getPosition(window);
+        sf::Vector2f mouse_positionf = static_cast<sf::Vector2f>(mouse_position);
+
+        sf::Vector2f drag_position = mouse_positionf - drag_offset; 
+    }
 }
