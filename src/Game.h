@@ -21,8 +21,10 @@ public:
 
 private:
 	bool collisionCheck(sf::Vector2i click, sf::Sprite sprite);
+	bool stampCollision(sf::Sprite* sprite);
+	void stampPassport(sf::Event event);
 	void spawn();
-
+	
 	sf::RenderWindow& window;
 
 	sf::Sprite background;
@@ -34,6 +36,14 @@ private:
 	sf::Texture* animals = new sf::Texture[3];
 	sf::Texture* passports = new sf::Texture[3];
 	sf::Sprite* dragged = nullptr;
+	sf::Sprite* accepted_stamp = new sf::Sprite;
+	sf::Sprite* rejected_stamp = new sf::Sprite;
+	sf::Sprite* accepted_button = new sf::Sprite;
+	sf::Sprite* rejected_button = new sf::Sprite;
+	sf::Texture* a_stamp_texture = new sf::Texture;
+	sf::Texture* r_stamp_texture = new sf::Texture;
+	sf::Texture* a_button_texture = new sf::Texture;
+	sf::Texture* r_button_texture = new sf::Texture;
 
 	sf::Font font;
 	sf::Text title_text;
@@ -52,6 +62,7 @@ private:
 	bool passport_accepted = false;
 	bool passport_rejected = false;
 	bool should_accept = false;
+	bool can_stamp = false;
 
 	float speed = 200;
 	//float* drag_offset = (dragged->getPosition().x, dragged->getPosition().y);
