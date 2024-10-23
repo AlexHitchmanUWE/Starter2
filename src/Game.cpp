@@ -112,13 +112,13 @@ bool Game::init()
     {
         std::cout << "penguin might be illegal";
     }
-    if (!a_stamp_texture->loadFromFile("Data/Images/Critter Crossing Customs/accept.png"));
+    if (!a_stamp_texture->loadFromFile("Data/Images/Critter Crossing Customs/chicken.png"));
     {
         std::cout << "\n stamp gone";
     }
     accepted_stamp->setTexture(*a_stamp_texture);
     accepted_stamp->setPosition(passport->getPosition());
-    if (!r_stamp_texture->loadFromFile("Data/Images/Critter Crossing Customs/reject.png"));
+    if (!r_stamp_texture->loadFromFile("Data/Images/Critter Crossing Customs/chicken.png"));
     {
         std::cout << "\n stamp gone";
     }
