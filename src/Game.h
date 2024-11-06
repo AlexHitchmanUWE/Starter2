@@ -22,7 +22,7 @@ public:
 private:
 	bool collisionCheck(sf::Vector2i click, sf::Sprite sprite);
 	bool stampCollision(sf::Sprite* sprite);
-	void stampPassport(sf::Event event);
+	void handOverPassport();
 	void spawn();
 	
 	sf::RenderWindow& window;
@@ -55,6 +55,7 @@ private:
 	sf::Text play_option;
 	sf::Text quit_option;
 	sf::Text score_text;
+	sf::Text lives_text;
 
 	bool in_menu;
 	bool play_selected = true;
@@ -63,6 +64,8 @@ private:
 	bool passport_rejected = false;
 	bool should_accept = false;
 	bool can_stamp = false;
+	bool stamped = false;
+	bool is_accepted = false;
 
 	float speed = 200;
 	//float* drag_offset = (dragged->getPosition().x, dragged->getPosition().y);
@@ -70,6 +73,7 @@ private:
 	sf::Vector2u windowSize = window.getSize();
 
 	int score = 0;
+	int lives = 5;
 
 };
 

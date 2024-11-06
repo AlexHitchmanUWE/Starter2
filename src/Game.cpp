@@ -22,7 +22,6 @@ Game::~Game()
     delete accepted_stamp;
     delete rejected_button;
     delete rejected_stamp;
-
 }
 
 bool Game::init()
@@ -86,6 +85,12 @@ bool Game::init()
         window.getSize().x / 8 - score_text.getGlobalBounds().width / 2,
         window.getSize().y / 16 - score_text.getGlobalBounds().height / 2);
 
+    lives_text.setString("lives: " + std::to_string(lives));
+    lives_text.setFont(font);
+    lives_text.setCharacterSize(80);
+    lives_text.setFillColor(sf::Color(255, 0, 38, 80));
+    lives_text.setPosition(725,625);
+
 
     if (!animals[0].loadFromFile("Data/Critter Crossing Customs/elephant.png"))
     {
@@ -112,13 +117,13 @@ bool Game::init()
     {
         std::cout << "penguin might be illegal";
     }
-    if (!a_stamp_texture->loadFromFile("Data/Images/Critter Crossing Customs/chicken.png"));
+    if (!a_stamp_texture->loadFromFile("Data/Images/Critter Crossing Customs/accept.png"));
     {
         std::cout << "\n stamp gone";
     }
     accepted_stamp->setTexture(*a_stamp_texture);
     accepted_stamp->setPosition(passport->getPosition());
-    if (!r_stamp_texture->loadFromFile("Data/Images/Critter Crossing Customs/chicken.png"));
+    if (!r_stamp_texture->loadFromFile("Data/Images/Critter Crossing Customs/reject.png"));
     {
         std::cout << "\n stamp gone";
     }
@@ -130,14 +135,14 @@ bool Game::init()
         std::cout << "\n button gone";
     }
     accepted_button->setTexture(*a_button_texture);
-    accepted_button->setPosition(700, 25);
+    accepted_button->setPosition(400, 25);
 
     if (!r_button_texture->loadFromFile("Data/Images/Critter Crossing Customs/reject button.png"));
     {
         std::cout << "\n button gone";
     }   
     rejected_button->setTexture(*r_button_texture);
-    rejected_button->setPosition(700, 125);
+    rejected_button->setPosition(750, 25);
 
 
     return true;
@@ -150,28 +155,6 @@ void Game::update(float dt)
     dragSprite(dragged);
     accepted_stamp->setPosition(passport->getPosition());
     rejected_stamp->setPosition(passport->getPosition());
-    bird.move(1.0f * speed * dt, 0);
-
-    if ((bird.getPosition().x > (window.getSize().x - bird.getGlobalBounds().width)) ||
-        (bird.getPosition().x < 0))
-    {
-        reverse = !reverse;
-    }
-    if (reverse == true)
-    {
-        bird.move(-2.0f * speed * dt, 0);
-        bird.setTextureRect(sf::IntRect(
-            bird.getLocalBounds().width,
-            0,
-            -bird.getLocalBounds().width,
-            bird.getLocalBounds().height));
-    }
-    else
-    {
-        bird.setTextureRect(sf::IntRect(
-            0, 0, bird.getLocalBounds().width, bird.getLocalBounds().height));
-    }
-    score_text.setString("score: " + std::to_string(score));
 }
 
 void Game::render()
@@ -185,21 +168,22 @@ void Game::render()
     else
     {
         window.draw(background);
-        //window.draw(bird);
-        //window.draw(title_text);
-        //window.draw(score_text);
         window.draw(*character);
         window.draw(*passport);
-        window.draw(*accepted_button);
-        window.draw(*rejected_button);
-        if (can_stamp && should_accept)
+        if (stamped && is_accepted)
         {
             window.draw(*accepted_stamp);
         }
-        if (can_stamp && !should_accept)
+        if (stamped && !is_accepted)
         {
             window.draw(*rejected_stamp);
         }
+        window.draw(*accepted_button);
+        window.draw(*rejected_button);
+        
+        window.draw(score_text);
+        window.draw(lives_text);
+        
     }
 
 }
@@ -213,14 +197,51 @@ void Game::mouseClicked(sf::Event event)
         sf::Vector2i click = sf::Mouse::getPosition(window);
         sf::Vector2f clickf = static_cast<sf::Vector2f>(click);
 
-        if (accepted_button->getGlobalBounds().contains(clickf))
+        if (collisionCheck(click, *accepted_button))
         {
-            dragged = accepted_button;
+            if (accepted_button->getGlobalBounds().intersects(passport->getGlobalBounds()))
+            {
+                std::cout<<"\n accepted";
+                stamped = true;
+                is_accepted = true;
+            }
         }
-        if (rejected_button->getGlobalBounds().contains(clickf))
+        else if (collisionCheck(click, *rejected_button))
         {
-            dragged = rejected_button;
+            if (rejected_button->getGlobalBounds().intersects(passport->getGlobalBounds()))
+            {
+                std::cout << "\n rejected";
+                stamped = true;
+                is_accepted = false;
+            }
         }
+        else if (passport->getGlobalBounds().contains(clickf))
+        {
+            dragged = passport;
+        }
+    }
+}
+void Game::handOverPassport()
+{
+    if ((stamped && is_accepted && should_accept) || (stamped && !is_accepted && !should_accept))
+    {
+        score++;
+        score_text.setString("score: " + std::to_string(score));
+        newAnimal();
+    }
+    else if (stamped && is_accepted && !should_accept)
+    {
+        std::cout << "Discrepancy Detected" << std::endl;
+        lives--;
+        lives_text.setString("lives: " + std::to_string(lives));
+        newAnimal();
+    }
+    else if (stamped && !is_accepted && should_accept)
+    {
+        std::cout << "Discrepancy Detected" << std::endl;
+        lives--;
+        lives_text.setString("lives: " + std::to_string(lives));
+        newAnimal();
     }
 }
 
@@ -270,8 +291,7 @@ bool Game::collisionCheck(sf::Vector2i click, sf::Sprite sprite)
         clickF.y >= spriteBounds.top &&
         clickF.y <= spriteBounds.top + spriteBounds.height)
     {
-        std::cout << "Hit!" << std::endl;
-        score++;
+        std::cout << "\n Hit!" << std::endl;
         return true;
     }
     else
@@ -293,16 +313,18 @@ void Game::newAnimal()
     int animal_index = rand() % 3;
     int passport_index = rand() % 3;
     should_accept = false;
+    is_accepted = false;
+    stamped = false;
 
     if (animal_index == passport_index)
     {
         should_accept = true;
-        std::cout << "Passed.\n";
+        std::cout << "\n Passed.";
     }
     else
     {
         should_accept = false;
-        std::cout << "Illegal!!\n";
+        std::cout << "\n Illegal!!";
 
     }
 
@@ -328,25 +350,12 @@ void Game::dragSprite(sf::Sprite* sprite)
 }
 void Game::mouseButtonReleased(sf::Event event)
 {
+    if (dragged == passport)
+    {
+        if (passport->getGlobalBounds().intersects(character->getGlobalBounds()))
+        {
+            handOverPassport();
+        }
+    }
     dragged = nullptr;
-}
-bool Game::stampCollision(sf::Sprite* sprite)
-{
-    if (sprite->getGlobalBounds().intersects(passport->getGlobalBounds()))
-    {
-        can_stamp = true;
-    }
-    return can_stamp;
-}
-void Game::stampPassport(sf::Event event)
-{
-    if (event.key.code == sf::Keyboard::Y)
-    {
-        should_accept = true;
-    }
-    else if (event.key.code == sf::Keyboard::N)
-    {
-        should_accept = false;
-    }
-
 }
